@@ -12,11 +12,13 @@ import java.util.List;
  * @author moscac
  */
 public class InputTable {
-    
-    private String name;
-    private int limitrecords;
-    private int skipRecords;
-    private List<InputRelatedTable> inputRelatedTables;
+
+    protected String name;
+    protected String whereClause;
+    protected int limitRecords;
+    protected int skipRecords;
+    protected List<InputTable> inputRelatedTables;
+    protected List<TableReference> tableReferences;
 
     public String getName() {
         return name;
@@ -26,12 +28,20 @@ public class InputTable {
         this.name = name;
     }
 
-    public int getLimitrecords() {
-        return limitrecords;
+    public String getWhereClause() {
+        return whereClause;
     }
 
-    public void setLimitrecords(int limitrecords) {
-        this.limitrecords = limitrecords;
+    public void setWhereClause(String whereClause) {
+        this.whereClause = whereClause;
+    }
+
+    public int getLimitRecords() {
+        return limitRecords;
+    }
+
+    public void setLimitRecords(int limitRecords) {
+        this.limitRecords = limitRecords;
     }
 
     public int getSkipRecords() {
@@ -42,12 +52,19 @@ public class InputTable {
         this.skipRecords = skipRecords;
     }
 
-    public List<InputRelatedTable> getInputRelatedTables() {
+    public List<InputTable> getInputRelatedTables() {
         return inputRelatedTables;
     }
 
-    public void setInputRelatedTables(List<InputRelatedTable> inputRelatedTables) {
+    public void setInputRelatedTables(List<InputTable> inputRelatedTables) {
         this.inputRelatedTables = inputRelatedTables;
     }
-    
+
+    public List<TableReference> getTableReferences() {
+        return tableReferences;
+    }
+
+    public void setTableReferences(List<TableReference> tableReferences) {
+        this.tableReferences = tableReferences;
+    }
 }

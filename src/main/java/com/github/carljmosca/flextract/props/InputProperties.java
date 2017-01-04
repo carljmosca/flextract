@@ -17,8 +17,18 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "input")
 public class InputProperties {
  
+    private String outputDirectory;
     private List<InputTable> inputTables;
 
+    public String getOutputDirectory() {
+        return outputDirectory;
+    }
+
+    public void setOutputDirectory(String outputDirectory) {
+        this.outputDirectory = outputDirectory;
+    }
+
+    
     public List<InputTable> getInputTables() {
         return inputTables;
     }
