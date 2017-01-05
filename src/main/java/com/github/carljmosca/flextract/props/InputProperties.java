@@ -16,9 +16,16 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConfigurationProperties(prefix = "input")
 public class InputProperties {
- 
+
+    private final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd";
+    private final String DEFAULT_TIME_FORMAT = "HH:mm:ss";
+    private final String DEFAULT_DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
+
     private String outputDirectory;
     private List<InputTable> inputTables;
+    private String dateFormat;
+    private String timeFormat;
+    private String dateTimeFormat;
 
     public String getOutputDirectory() {
         return outputDirectory;
@@ -28,7 +35,6 @@ public class InputProperties {
         this.outputDirectory = outputDirectory;
     }
 
-    
     public List<InputTable> getInputTables() {
         return inputTables;
     }
@@ -36,5 +42,38 @@ public class InputProperties {
     public void setInputTables(List<InputTable> inputTables) {
         this.inputTables = inputTables;
     }
-        
+
+    public String getDateFormat() {
+        if (dateFormat == null || dateFormat.isEmpty()) {
+            return DEFAULT_DATE_FORMAT;
+        }
+        return dateFormat;
+    }
+
+    public void setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
+    }
+
+    public String getTimeFormat() {
+        if (timeFormat == null || timeFormat.isEmpty()) {
+            return DEFAULT_TIME_FORMAT;
+        }
+        return timeFormat;
+    }
+
+    public void setTimeFormat(String timeFormat) {
+        this.timeFormat = timeFormat;
+    }
+
+    public String getDateTimeFormat() {
+        if (dateTimeFormat == null || dateTimeFormat.isEmpty()) {
+            return DEFAULT_DATE_TIME_FORMAT;
+        }
+        return dateTimeFormat;
+    }
+
+    public void setDateTimeFormat(String dateTimeFormat) {
+        this.dateTimeFormat = dateTimeFormat;
+    }
+
 }
