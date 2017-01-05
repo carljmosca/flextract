@@ -7,8 +7,11 @@ package com.github.carljmosca.flextract.repository;
 
 import com.github.carljmosca.flextract.props.InputProperties;
 import com.github.carljmosca.flextract.props.InputTable;
+import com.github.carljmosca.flextract.util.DatabaseUtility;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -30,6 +33,8 @@ public class BaseRepository {
     InputProperties inputProperties;
     @Autowired
     JdbcTemplate jdbcTemplate;
+    @Autowired
+    DatabaseUtility databaseUtility;
 
     @Transactional(readOnly = true)
     public SqlRowSet executeQuery(InputTable inputTable, SqlRowSet sqlRowSet, SqlRowSet parentSqlRowSet) {
@@ -47,6 +52,12 @@ public class BaseRepository {
         return "flextract";
     }
 
+    public List<String> getTables() {
+        List<String> result = new ArrayList<>();
+        
+        return result;
+    }
+    
     private String buildQuery(InputTable inputTable, SqlRowSet sqlRowSet,
             SqlRowSet parentResultSet) {
         StringBuilder result = new StringBuilder();
@@ -71,12 +82,8 @@ public class BaseRepository {
         if (whereClause.length() > 0) {
             result.append(" where ").append(whereClause.toString());
         }
-        if (inputTable.getSkipRecords() > 0) {
-            result.append(" skip ").append(inputTable.getSkipRecords());
-        }
-        if (inputTable.getLimitRecords() > 0) {
-            result.append(" limit ").append(inputTable.getLimitRecords());
-        }
+        result.append(databaseUtility.getSkipLimitClause(inputTable.getSkipRecords(), 
+                inputTable.getLimitRecords()));
         return result.toString();
     }
 
