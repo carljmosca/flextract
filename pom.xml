@@ -54,4 +54,10 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id></id>
+            <activation></activation>
+        </profile>
+    </profiles>
 </project>

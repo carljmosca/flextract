@@ -26,6 +26,8 @@ public class InputProperties {
     private String dateFormat;
     private String timeFormat;
     private String dateTimeFormat;
+    protected int limitRecords;
+    protected int skipRecords;
 
     public String getOutputDirectory() {
         return outputDirectory;
@@ -74,6 +76,22 @@ public class InputProperties {
 
     public void setDateTimeFormat(String dateTimeFormat) {
         this.dateTimeFormat = dateTimeFormat;
+    }
+
+    public int getLimitRecords() {
+        return limitRecords;
+    }
+
+    public void setLimitRecords(int limitRecords) {
+        this.limitRecords = limitRecords;
+    }
+
+    public int getSkipRecords() {
+        return skipRecords;
+    }
+
+    public void setSkipRecords(int skipRecords) {
+        this.skipRecords = skipRecords;
     }
 
 }

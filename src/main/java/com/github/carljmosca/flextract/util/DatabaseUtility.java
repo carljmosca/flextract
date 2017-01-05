@@ -5,6 +5,7 @@
  */
 package com.github.carljmosca.flextract.util;
 
+import com.github.carljmosca.flextract.props.InputProperties;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,8 @@ public class DatabaseUtility {
 
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
+    InputProperties inputProperties;
     @Autowired
     JdbcTemplate jdbcTemplate;
 
@@ -44,6 +47,12 @@ public class DatabaseUtility {
 
     public String getSkipLimitClause(int skip, int limit) {
         StringBuilder result = new StringBuilder();
+        if (skip <= 0) {
+            skip = inputProperties.getSkipRecords();
+        }
+        if (limit <= 0) {
+            limit = inputProperties.getLimitRecords();
+        }
         switch (getDatabaseType()) {
             case INFORMIX:
                 if (skip > 0) {
