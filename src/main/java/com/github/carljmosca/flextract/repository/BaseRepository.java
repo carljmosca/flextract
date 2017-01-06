@@ -37,9 +37,9 @@ public class BaseRepository {
     DatabaseUtility databaseUtility;
 
     @Transactional(readOnly = true)
-    public SqlRowSet executeQuery(InputTable inputTable, SqlRowSet sqlRowSet, SqlRowSet parentSqlRowSet) {
+    public SqlRowSet executeQuery(InputTable inputTable, SqlRowSet parentSqlRowSet) {
 
-        SqlRowSet rs = jdbcTemplate.queryForRowSet(buildQuery(inputTable, sqlRowSet, parentSqlRowSet));
+        SqlRowSet rs = jdbcTemplate.queryForRowSet(buildQuery(inputTable, parentSqlRowSet));
         return rs;
     }
 
@@ -58,11 +58,11 @@ public class BaseRepository {
         return result;
     }
     
-    private String buildQuery(InputTable inputTable, SqlRowSet sqlRowSet,
+    private String buildQuery(InputTable inputTable,
             SqlRowSet parentResultSet) {
         StringBuilder result = new StringBuilder();
         StringBuilder whereClause = new StringBuilder();
-        result.append("select * from ").append(inputTable.getName());
+        result.append("* from ").append(inputTable.getName());
         if (inputTable.getWhereClause() != null && !inputTable.getWhereClause().trim().isEmpty()) {
             whereClause.append(inputTable.getWhereClause());
         }
@@ -82,9 +82,8 @@ public class BaseRepository {
         if (whereClause.length() > 0) {
             result.append(" where ").append(whereClause.toString());
         }
-        result.append(databaseUtility.getSkipLimitClause(inputTable.getSkipRecords(), 
-                inputTable.getLimitRecords()));
-        return result.toString();
+        return databaseUtility.addSkipLimitClause(result.toString(), inputTable.getSkipRecords(), 
+                inputTable.getLimitRecords());
     }
 
     public String getFieldValue(SqlRowSet resultSet, int columnIndex, int columnType) {

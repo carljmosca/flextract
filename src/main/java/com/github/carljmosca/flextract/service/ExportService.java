@@ -7,11 +7,14 @@ package com.github.carljmosca.flextract.service;
 
 import com.github.carljmosca.flextract.props.InputProperties;
 import com.github.carljmosca.flextract.props.InputTable;
+import com.github.carljmosca.flextract.props.TableReport;
 import com.github.carljmosca.flextract.repository.BaseRepository;
+import com.github.carljmosca.flextract.util.DatabaseUtility;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,29 +33,61 @@ public class ExportService {
     private InputProperties inputProperties;
     @Autowired
     BaseRepository baseRepository;
-    BufferedWriter bufferedWriter;
-    
+    @Autowired
+    DatabaseUtility databaseUtility;
+    BufferedWriter bfInsertStatements;
+    BufferedWriter bfReport;
+    List<TableReport> tableReports;
+
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public void process() {
+        initialize();
         inputProperties.getInputTables().forEach((InputTable inputTable) -> {
             try {
-                bufferedWriter = new BufferedWriter(new FileWriter(
-                        inputProperties.getOutputDirectory() + "/"
-                        + baseRepository.getDatabaseName() + ".sql", true));
                 createInsertStatements(inputTable, null);
-                bufferedWriter.close();
             } catch (SQLException | IOException e) {
                 logger.error(e.getMessage());
             }
         });
+        finish();
+    }
+
+    private void initialize() {
+        try {
+            bfInsertStatements = new BufferedWriter(new FileWriter(
+                    inputProperties.getOutputDirectory() + "/"
+                    + baseRepository.getDatabaseName() + ".sql", true));
+            bfReport = new BufferedWriter(new FileWriter(
+                    inputProperties.getOutputDirectory() + "/Flextract.rpt", true));
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
+    }
+
+    private void finish() {
+        try {
+            bfReport.write("Tables not referenced:");
+            bfReport.newLine();
+            for (TableReport tableReport : databaseUtility.getTableReports()) {
+                if (!tableReport.isReferenced()) {
+                    bfReport.write(tableReport.getTableName());
+                    bfReport.newLine();
+                }
+            }
+            bfReport.close();
+            bfInsertStatements.close();
+        } catch (IOException e) {
+            logger.error(e.getMessage());
+        }
     }
 
     private void createInsertStatements(InputTable inputTable, SqlRowSet parentResultSet) throws SQLException, IOException {
 
+        databaseUtility.reportTable(inputTable.getName());
         StringBuilder insertStatement = new StringBuilder();
-        SqlRowSet sqlRowSet = null;
-        sqlRowSet = baseRepository.executeQuery(inputTable, sqlRowSet, parentResultSet);
+        SqlRowSet sqlRowSet;
+        sqlRowSet = baseRepository.executeQuery(inputTable, parentResultSet);
         SqlRowSetMetaData metaData = sqlRowSet.getMetaData();
         while (sqlRowSet.next()) {
             insertStatement.setLength(0);
@@ -71,8 +106,8 @@ public class ExportService {
                 insertStatement.append(baseRepository.getFieldValue(sqlRowSet, i, metaData.getColumnType(i)));
             }
             insertStatement.append(");");
-            bufferedWriter.write(insertStatement.toString());
-            bufferedWriter.newLine();
+            bfInsertStatements.write(insertStatement.toString());
+            bfInsertStatements.newLine();
             if (inputTable.getInputRelatedTables() != null) {
                 for (InputTable iTable : inputTable.getInputRelatedTables()) {
                     createInsertStatements(iTable, sqlRowSet);
