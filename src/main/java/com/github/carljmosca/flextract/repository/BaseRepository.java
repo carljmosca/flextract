@@ -8,6 +8,7 @@ package com.github.carljmosca.flextract.repository;
 import com.github.carljmosca.flextract.props.InputProperties;
 import com.github.carljmosca.flextract.props.InputTable;
 import com.github.carljmosca.flextract.util.DatabaseUtility;
+import groovy.lang.GroovyShell;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,10 +55,10 @@ public class BaseRepository {
 
     public List<String> getTables() {
         List<String> result = new ArrayList<>();
-        
+
         return result;
     }
-    
+
     private String buildQuery(InputTable inputTable,
             SqlRowSet parentResultSet) {
         StringBuilder result = new StringBuilder();
@@ -82,11 +83,17 @@ public class BaseRepository {
         if (whereClause.length() > 0) {
             result.append(" where ").append(whereClause.toString());
         }
-        return databaseUtility.addSkipLimitClause(result.toString(), inputTable.getSkipRecords(), 
+        return databaseUtility.addSkipLimitClause(result.toString(), inputTable.getSkipRecords(),
                 inputTable.getLimitRecords());
     }
 
-    public String getFieldValue(SqlRowSet resultSet, int columnIndex, int columnType) {
+    public String getFieldValue(SqlRowSet resultSet, int columnIndex,
+            int columnType) {
+        return getFieldValue(resultSet, columnIndex, columnType, null);
+    }
+
+    public String getFieldValue(SqlRowSet resultSet, int columnIndex,
+            int columnType, String filter) {
         if (resultSet.getObject(columnIndex) == null) {
             return NULL_STRING_VALUE;
         }
@@ -124,4 +131,5 @@ public class BaseRepository {
         }
         return result;
     }
+
 }

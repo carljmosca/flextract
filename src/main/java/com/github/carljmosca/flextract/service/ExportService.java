@@ -7,6 +7,7 @@ package com.github.carljmosca.flextract.service;
 
 import com.github.carljmosca.flextract.props.InputProperties;
 import com.github.carljmosca.flextract.props.InputTable;
+import com.github.carljmosca.flextract.props.InputTableColumn;
 import com.github.carljmosca.flextract.props.TableReport;
 import com.github.carljmosca.flextract.repository.BaseRepository;
 import com.github.carljmosca.flextract.util.DatabaseUtility;
@@ -103,7 +104,9 @@ public class ExportService {
                 if (i > 1) {
                     insertStatement.append(", ");
                 }
-                insertStatement.append(baseRepository.getFieldValue(sqlRowSet, i, metaData.getColumnType(i)));
+                insertStatement.append(baseRepository.getFieldValue(sqlRowSet, i,
+                        metaData.getColumnType(i), getColumnFilter(
+                                metaData.getColumnName(i), inputTable.getColumns())));
             }
             insertStatement.append(");");
             bfInsertStatements.write(insertStatement.toString());
@@ -114,6 +117,18 @@ public class ExportService {
                 }
             }
         }
+    }
+
+    private String getColumnFilter(String columnName, List<InputTableColumn> columns) {
+        String result = null;
+        if (columns != null) {
+            for (InputTableColumn inputTableColumn : columns) {
+                if (columnName.equalsIgnoreCase(inputTableColumn.getName())) {
+                    return inputTableColumn.getFilter();
+                }
+            }
+        }
+        return result;
     }
 
 }

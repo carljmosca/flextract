@@ -19,6 +19,7 @@ public class InputTable {
     protected int skipRecords;
     protected List<InputTable> inputRelatedTables;
     protected List<TableReference> tableReferences;
+    protected List<InputTableColumn> columns;
 
     public String getName() {
         return name;
@@ -67,4 +68,13 @@ public class InputTable {
     public void setTableReferences(List<TableReference> tableReferences) {
         this.tableReferences = tableReferences;
     }
+
+    public List<InputTableColumn> getColumns() {
+        return columns;
+    }
+
+    public void setColumns(List<InputTableColumn> columns) {
+        this.columns = columns;
+    }
+    
 }
