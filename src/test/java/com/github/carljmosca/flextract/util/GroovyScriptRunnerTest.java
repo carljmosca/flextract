@@ -43,11 +43,17 @@ public class GroovyScriptRunnerTest {
     @Test
     public void testRunGroovyScript() {
         System.out.println("runGroovyScript");
-        String code = "return value + '!'";
-        Object inputValue = "hello";
+        String code = "if (value == null) return null; if (value.length() < 4) return value; return '22-333-' + value.substring(value.length() - 4, value.length())";
         GroovyScriptRunner instance = new GroovyScriptRunner();
-        Object expResult = inputValue + "!";
+        Object inputValue = "123-45-6789";
+        Object expResult = "22-333-6789";
         Object result = instance.runGroovyScript(code, inputValue);
+        assertEquals(expResult, result);
+        inputValue = null;
+        assertNull(instance.runGroovyScript(code, inputValue));
+        inputValue = "123";
+        expResult = "123";
+        result = instance.runGroovyScript(code, inputValue);
         assertEquals(expResult, result);
     }
 
